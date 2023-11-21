@@ -12,7 +12,7 @@ import {
   Button,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {Gap, Header} from '../../components';
+import {Gap, Header, Modal} from '../../components';
 import {colors} from '../../utils/colors';
 import {
   heightComparedByReference as height,
@@ -21,17 +21,14 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOrder} from '../../features/listOrder/listOrderSlice';
 import {ICCalendar, ICDelete, ICEdit} from '../../images';
-import {getListItem} from '../../features/listItem/listItemSlice';
-
-import Modal from 'react-native-modal';
+import {getListItem, setModal} from '../../features/listItem/listItemSlice';
 
 const Home = () => {
   const {listOrder} = useSelector(state => state.listOrder);
-  const {listItem} = useSelector(state => state.listItem);
+  const {listItem, isModal} = useSelector(state => state.listItem);
   const dispatch = useDispatch();
 
   const [type, setType] = useState('');
-  const [isModal, setModal] = useState(false);
 
   useEffect(() => {
     dispatch(getListOrder()).then(res => {
@@ -162,7 +159,7 @@ const Home = () => {
                     <Text style={styles.titleSection}>Detail Sales</Text>
                     <TouchableOpacity
                       style={styles.button}
-                      onPress={() => setModal(true)}>
+                      onPress={() => dispatch(setModal(true))}>
                       <Text style={{color: colors.text.primary}}>Add Item</Text>
                     </TouchableOpacity>
                   </View>
@@ -294,13 +291,10 @@ const Home = () => {
           </View>
         )}
       </SafeAreaView>
-      <Modal isVisible={isModal}>
-        <View style={{flex: 1}}>
-          <Text>Hello!</Text>
-
-          <Button title="Hide modal" onPress={() => setModal(false)} />
-        </View>
-      </Modal>
+      <Modal
+        isVisible={isModal}
+        onCloseModal={() => dispatch(setModal(false))}
+      />
     </>
   );
 };
